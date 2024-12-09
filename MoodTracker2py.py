@@ -65,7 +65,22 @@ class MoodTracker:
 
     def plot_previous_entries(self):
         """
-        Create a seaborn plot of the last 3 mood entries.
+        Create a seaborn plot displaying the mood severity distribution for the last 3 mood entries.
+
+        Attributes:
+            df (pd.DataFrame): The DataFrame containing mood data read from the 'mood_data.csv' file.
+
+        Side Effects:
+            - Reads the 'mood_data.csv' file to load the mood data.
+            - If there are fewer than 3 entries, all available entries will be plotted.
+            - Displays a seaborn count plot showing the distribution of mood severity for the last 3 (or fewer) entries.
+            - If the CSV file is not found, an error message is printed.
+
+        Returns:
+            None: The method does not return a value. It only generates and displays a plot.
+
+        Raises:
+            FileNotFoundError: If the 'mood_data.csv' file is not found.
         """
         try:
             self.df = pd.read_csv('mood_data.csv')
@@ -85,6 +100,30 @@ class MoodTracker:
             print("No past entries found. Please add an entry first.")
             
     def __call__(self, analysis = "summary"):
+        """
+        Perform mood analysis on the data and return the result based on the specified analysis type.
+
+        Args:
+            analysis (str): The type of analysis to perform. 
+                         Options are 'summary' or 'trend'. Default is 'summary'.
+    
+        Attributes:
+            df (pd.DataFrame): The DataFrame containing mood data read from the 'mood_data.csv' file.
+
+        Side Effects:
+            - Reads the 'mood_data.csv' file to load the mood data.
+            - If the file is not found, an error message is returned.
+            - If the DataFrame is empty, an appropriate message is returned.
+
+        Returns:
+            str: A string summarizing the analysis results:
+                - 'summary' analysis returns the total number of entries, the most common mood, and the average severity.
+                - 'trend' analysis returns the distribution of mood counts.
+                - An error message is returned if an invalid analysis type is provided or if the CSV file is not found.
+
+        Raises:
+            FileNotFoundError: If the 'mood_data.csv' file is not found.
+        """
         try:
             self.df = pd.read_csv('mood_data.csv')
         except FileNotFoundError:
@@ -109,6 +148,26 @@ class MoodTracker:
 
 
 def parse_args():
+    """
+    Parse command-line arguments and execute the appropriate action based on the user's input.
+
+    Attributes:
+        args (argparse.Namespace): The parsed command-line arguments containing the user's specified actions.
+
+    Side Effects:
+        - Creates an instance of the MoodTracker class.
+        - Executes one of the following actions based on the parsed arguments:
+          - `--add`: Adds a new mood entry by calling the `add_entry` method of the `MoodTracker` instance.
+          - `--view`: Displays all previous mood entries by calling the `view_entries` method of the `MoodTracker` instance.
+          - `--plot`: Plots the mood severity distribution for the last 3 entries by calling the `plot_previous_entries` method of the `MoodTracker` instance.
+          - `--analysis`: Performs mood analysis (either 'summary' or 'trend') by calling the `__call__` method of the `MoodTracker` instance with the specified analysis type.
+
+    Returns:
+        None: The function does not return any value. It directly performs actions based on the command-line arguments.
+    
+    Raises:
+        argparse.ArgumentError: If invalid arguments are passed, such as missing or incorrect flag types.
+    """
     parser = ArgumentParser(description="Mood Tracker")
     parser.add_argument('--add', action='store_true', help="Add a new mood entry")
     parser.add_argument('--view', action='store_true', help="View previous mood entries")
