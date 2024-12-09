@@ -2,7 +2,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from argparse import ArgumentParser
-# side effects in init method and other methods in classes
+
 
 class MoodTracker:
     def __init__(self):
@@ -12,6 +12,7 @@ class MoodTracker:
         """
         Add a new mood entry to the DataFrame.
         """
+        print("Welcome to your personal Mood Tracker!")
         name = input("Enter your name: ")
         date = input("Enter the date (YYYY-MM-DD): ")
         mood = input("What mood are you feeling? (sad, happy, surprised, bad, fearful, angry, disgusted): ")
@@ -82,13 +83,38 @@ class MoodTracker:
             plt.show()
         except FileNotFoundError:
             print("No past entries found. Please add an entry first.")
+            
+    def __call__(self, analysis = "summary"):
+        try:
+            self.df = pd.read_csv('mood_data.csv')
+        except FileNotFoundError:
+            return "csv file not found."
+            
+        if self.df.empty:
+            return "No data to show."
+        
+        if analysis == "summary":
+            return (
+                f"Summary:\n"
+                f"- Total Entries: {len(self.df)}\n"
+                f"- Most Common Mood: {self.df['mood'].mode()[0]}\n"
+                f"- Average Severity: {self.df['severity'].mean():.2f}"
+            )
+        elif analysis == "trend":
+            mood_counts = self.df['mood'].value_counts()
+            return f"mood trend: \n{mood_counts.to_string()}"
+        else:
+            return "Invalid analysis, use summary or trend."
+        
 
 
-def main():
+def parse_args():
     parser = ArgumentParser(description="Mood Tracker")
     parser.add_argument('--add', action='store_true', help="Add a new mood entry")
     parser.add_argument('--view', action='store_true', help="View previous mood entries")
     parser.add_argument('--plot', action='store_true', help="Plot the last 3 mood entries")
+    parser.add_argument('--analysis', type=str, help="Perform mood analysis: summary or trend")
+
 
     args = parser.parse_args()
 
@@ -101,9 +127,11 @@ def main():
         tracker.view_entries()
     elif args.plot:
         tracker.plot_previous_entries()
+    elif args.analysis:
+        print(tracker(analysis=args.analysis))
     else:
-        print("No action specified. Use --add, --view, or --plot.")
-
+        print("No action specified. Use add, view entries, plot, analysis.")
 
 if __name__ == "__main__":
-    main()
+    parse_args()
+
