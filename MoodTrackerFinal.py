@@ -5,8 +5,6 @@ from argparse import ArgumentParser
 
 
 class MoodTracker:
-<<<<<<< HEAD
-=======
     """A class for a mood tracker that records mood entries in a DataFrame and saves them to a CSV file.
 
     Attributes: 
@@ -16,7 +14,6 @@ class MoodTracker:
     Allows the user to input their mood entry details, validates inputs, and adds the
     entry to the DataFrame csv file called 'mood_data.csv'.
     """
->>>>>>> origin
     def __init__(self):
         self.df = pd.DataFrame(columns=['name', 'date', 'mood', 'context', 'severity'])
 
@@ -155,10 +152,7 @@ class MoodTracker:
             return f"mood trend: \n{mood_counts.to_string()}"
         else:
             return "Invalid analysis, use summary or trend."
-<<<<<<< HEAD
-=======
 
->>>>>>> origin
 def parse_args():
     """
     Parse command-line arguments and execute the appropriate action based on the user's input.
@@ -173,13 +167,9 @@ def parse_args():
           - `--view`: Displays all previous mood entries by calling the `view_entries` method of the `MoodTracker` instance.
           - `--plot`: Plots the mood severity distribution for the last 3 entries by calling the `plot_previous_entries` method of the `MoodTracker` instance.
           - `--analysis`: Performs mood analysis (either 'summary' or 'trend') by calling the `__call__` method of the `MoodTracker` instance with the specified analysis type.
-<<<<<<< HEAD
-
-=======
           - `--search`: Allows the user to search for mood entries by keyword in the context.
           - `--describe`: Allows user to see a word form of their rated severity.
-    
->>>>>>> origin
+
     Returns:
         None: The function does not return any value. It directly performs actions based on the command-line arguments.
     
@@ -191,24 +181,15 @@ def parse_args():
     parser.add_argument('--view', action='store_true', help="View previous mood entries")
     parser.add_argument('--plot', action='store_true', help="Plot the last 3 mood entries")
     parser.add_argument('--analysis', type=str, help="Perform mood analysis: summary or trend")
-<<<<<<< HEAD
-
-=======
     parser.add_argument('--search', type=str, help="Search for mood entries by context keyword")
     parser.add_argument('--describe', action='store_true', help="Describes mood severity based on past entries")
     
->>>>>>> origin
+
     args = parser.parse_args()
 
     
     tracker = MoodTracker()
-<<<<<<< HEAD
 
-
-
-    
-=======
->>>>>>> origin
     if args.add:
         tracker.add_entry()
     elif args.view:
@@ -217,14 +198,11 @@ def parse_args():
         tracker.plot_previous_entries()
     elif args.analysis:
         print(tracker(analysis=args.analysis))
-<<<<<<< HEAD
-=======
     elif args.search:
         print(f"Searching for keyword in context: {args.search}")
         tracker.search_context_entries(args.search)
     elif args.describe:
         tracker.describe_severity_from_csv()
->>>>>>> origin
     else:
         print("No action specified. Use add, view entries, plot, analysis.")
 
