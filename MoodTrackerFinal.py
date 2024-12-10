@@ -173,28 +173,24 @@ class MoodTracker:
             except FileNotFoundError:
                 print("File not found.")
     
-    def plot_previous_entries(self):
-        """Create a seaborn plot displaying the mood severity distribution for the last 3 mood entries.
-
+    def plot_entries(self):
+        """
+        Create a seaborn plot displaying the mood severity for given entries.
+        Attributes:
+            df (pd.DataFrame): The DataFrame containing mood data read from the 'mood_data.csv' file.
         Side Effects:
-            Reads the 'mood_data.csv' file to load the mood data.
-            If there are fewer than 3 entries, all available entries will be plotted.
-            Displays a seaborn count plot showing the distribution of mood severity for the last 3 (or fewer) entries.
-            If the CSV file is not found, an error message is printed.
-
+            - Reads the 'mood_data.csv' file to load the mood data.
+            - Displays a seaborn count plot showing the distribution of mood severity for the entries.
+            - If the CSV file is not found, an error message is printed.
         Returns:
             None: The method does not return a value. It only generates and displays a plot.
-
         Raises:
             FileNotFoundError: If the 'mood_data.csv' file is not found.
-
-        Author & Technique:
-            Selam Fesseha & seaborne
         """
         try:    
             self.df = pd.read_csv('mood_data.csv')     
             self.df['mood'] = self.df['mood'].str.strip()
-            
+
             print("Unique moods in the dataset:", self.df['mood'].unique())
 
             plt.figure(figsize=(10, 6))
@@ -207,43 +203,42 @@ class MoodTracker:
             print("No past entries found. Please add an entry first.")
 
     def __call__(self, analysis = "summary"):
-        """Perform mood analysis on the data and return the result based on the specified analysis type.
-
+        """
+        Perform mood analysis on the data and return the result based on the specified analysis type.
         Args:
             analysis (str): The type of analysis to perform. 
                          Options are 'summary' or 'trend'. Default is 'summary'.
     
+        Attributes:
+            df (pd.DataFrame): The DataFrame containing mood data read from the 'mood_data.csv' file.
         Side Effects:
             - Reads the 'mood_data.csv' file to load the mood data.
             - If the file is not found, an error message is returned.
             - If the DataFrame is empty, an appropriate message is returned.
-
         Returns:
             str: A string summarizing the analysis results:
                 - 'summary' analysis returns the total number of entries, the most common mood, and the average severity.
                 - 'trend' analysis returns the distribution of mood counts.
                 - An error message is returned if an invalid analysis type is provided or if the CSV file is not found.
-
         Raises:
             FileNotFoundError: If the 'mood_data.csv' file is not found.
-        
-        Author & Technique:
-            Selam Fesseha & magic method
         """
         try:
             self.df = pd.read_csv('mood_data.csv')
         except FileNotFoundError:
             return "csv file not found."
-            
+
         if self.df.empty:
             return "No data to show."
-        
+
         if analysis == "summary":
+            most_common_mood = self.df['mood'].mode()[0]
+            average_severity = self.df['severity'].mean()
             return (
                 f"Summary:\n"
                 f"- Total Entries: {len(self.df)}\n"
-                f"- Most Common Mood: {self.df['mood'].mode()[0]}\n"
-                f"- Average Severity: {self.df['severity'].mean():.2f}"
+                f"- Most Common Mood: {most_common_mood}\n"
+                f"- Average Severity: {average_severity:.2f}"
             )
         elif analysis == "trend":
             mood_counts = self.df['mood'].value_counts()
