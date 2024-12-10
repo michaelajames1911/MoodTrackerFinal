@@ -6,11 +6,10 @@ from datetime import datetime
 import json
 
 class MoodTracker:
-    """
-    A mood tracker that records mood entries in a DataFrame and saves them to a CSV file.
+    """A class for a mood tracker that records mood entries in a DataFrame and saves them to a CSV file.
 
-    Attributes: pandas.DataFrame
-    A DataFrame that has columns ['name', 'date', 'mood', 'context', 'severity'] the stores mood entries.
+    Attributes: 
+    df (pandas.DataFrame): A DataFrame that has columns ['name', 'date', 'mood', 'context', 'severity'] the stores mood entries.
 
     Methods: add_entry(), 
     Allows the user to input their mood entry details, validates inputs, and adds the
@@ -242,27 +241,6 @@ class MoodTracker:
         else:
             return "Invalid analysis, use summary or trend."
 
-class Feedback(MoodTracker):
-    def init(self):
-        super().__init__()
-    def give_feedback(self):
-        feedback = []
-        self.df = pd.read_csv('mood_data.csv')
-        
-        if self.df[self.df['severity']] < 3:
-            feedback.append(f"THere are {len(self.df[self.df['severity']])} entries with low severity. Consider checking in with yourself to address any persistent low moods.")
-
-        if self.df[self.df['severity'] > 8]:
-            feedback.append(f"There are {len(self.df[self.df['severity']] > 8)} entries with high severity. Make sure to take care of your well-being and reach out for support if needed!.")
-
-        sad_count = self.df[self.df['mood'] == 'sad'].shape[0]
-        
-        if sad_count >= 3:
-            feedback.append(f"You've felt 'sad' {sad_count} times recently. It might help to talk to someone or practice self-care.")
-
-        if feedback:
-            return"\n".join(feedback)
-
 def parse_args():
     """
     Parse command-line arguments and execute the appropriate action based on the user's input.
@@ -278,6 +256,8 @@ def parse_args():
           - `--plot`: Plots the mood severity distribution for the last 3 entries by calling the `plot_previous_entries` method of the `MoodTracker` instance.
           - `--analysis`: Performs mood analysis (either 'summary' or 'trend') by calling the `__call__` method of the `MoodTracker` instance with the specified analysis type.
           - `--search`: Allows the user to search for mood entries by keyword in the context.
+          - `--describe`: Allows user to see a word form of their rated severity.
+    
     Returns:
         None: The function does not return any value. It directly performs actions based on the command-line arguments.
     
@@ -289,20 +269,12 @@ def parse_args():
     parser.add_argument('--view', action='store_true', help="View previous mood entries")
     parser.add_argument('--plot', action='store_true', help="Plot the last 3 mood entries")
     parser.add_argument('--analysis', type=str, help="Perform mood analysis: summary or trend")
-    parser.add_argument('--feedback', action='store_true', help="Get feedback on mood patterns (low/high severity or frequent sadness)")
     parser.add_argument('--search', type=str, help="Search for mood entries by context keyword")
     parser.add_argument('--describe', action='store_true', help="Describes mood severity based on past entries")
     
     args = parser.parse_args()
 
     tracker = MoodTracker()
-    tracker = Feedback()
-
-    if args.feedback:
-        tracker = Feedback()
-        print(tracker.give_feedback())
-    else:
-        tracker = MoodTracker()
         if args.add:
             tracker.add_entry()
         elif args.view:
