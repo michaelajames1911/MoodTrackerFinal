@@ -124,6 +124,41 @@ class MoodTracker:
                 print(matches_json)
         except Exception:
             print(f"An error occurred: {Exception}")
+
+    def describe_severity_from_csv(self):
+            """
+            Reads mood entries from CSV and generates a description of the severity for each entry.
+
+            Returns:
+                str: severity in word form on certain date.
+
+            Raises:
+                FileNotFoundError: file doesn't exist/can't find it.
+
+            Author & Technique:
+                Lita O'Brien, conditional expressions
+            """
+            try:
+                self.df = pd.read_csv('mood_data.csv')
+                if self.df.empty:
+                    print("No mood entries found.")
+                    return
+
+                for index, row in self.df.iterrows():
+                    severity = row['severity']
+                    date = row['date']
+                    
+                    severity_word = (
+                        "marginal" if severity <= 2 else
+                        "slight" if severity <= 5 else
+                        "enhanced" if severity <= 8 else
+                        "moderate"
+                    )
+                    
+                    print(f"You had {severity_word} feelings on {date}")
+            
+            except FileNotFoundError:
+                print("File not found.")
     
     def plot_previous_entries(self):
         """
@@ -256,7 +291,8 @@ def parse_args():
     parser.add_argument('--analysis', type=str, help="Perform mood analysis: summary or trend")
     parser.add_argument('--feedback', action='store_true', help="Get feedback on mood patterns (low/high severity or frequent sadness)")
     parser.add_argument('--search', type=str, help="Search for mood entries by context keyword")
-
+    parser.add_argument('--describe', action='store_true', help="Describes mood severity based on past entries")
+    
     args = parser.parse_args()
 
     tracker = MoodTracker()
@@ -278,6 +314,8 @@ def parse_args():
         elif args.search:
             print(f"Searching for keyword in context: {args.search}")
             tracker.search_context_entries(args.search)
+        elif args.describe:
+            tracker.describe_severity_from_csv()
         else:
             print("No action specified. Use add, view entries, plot, analysis.")
 
