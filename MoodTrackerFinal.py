@@ -186,6 +186,8 @@ class MoodTracker:
             None: The method does not return a value. It only generates and displays a plot.
         Raises:
             FileNotFoundError: If the 'mood_data.csv' file is not found.
+        Author & Technique:
+                Selam Fesseha, Seaborn Graph
         """
         try:    
             self.df = pd.read_csv('mood_data.csv')     
@@ -222,6 +224,9 @@ class MoodTracker:
                 - An error message is returned if an invalid analysis type is provided or if the CSV file is not found.
         Raises:
             FileNotFoundError: If the 'mood_data.csv' file is not found.
+            
+        Author & Technique:
+                Selam Fesseha, Call Magic Method
         """
         try:
             self.df = pd.read_csv('mood_data.csv')
