@@ -86,6 +86,20 @@ class MoodTracker:
         self.df.to_csv('mood_data.csv', index=False)
         print(f"Entry for {name} on {date} saved successfully!")
 
+    def analyze_severity(entries):
+        if not entries:
+            return "No entries available for analysis."
+        
+        total_severity = sum(entry['severity'] for entry in entries)
+        avg_severity = total_severity / len(entries) if entries else 0
+        high_severity_count = sum(1 for entry in entries if entry['severity'] > 7)
+
+        return (
+            f"Severity Analysis:\n"
+            f"- Average Severity: {avg_severity:.2f}\n"
+            f"- High-Severity Entries (>7): {high_severity_count}"
+        )
+    
     def view_entries(self):
         """
         Display all past entries from the CSV.
