@@ -144,9 +144,27 @@ class MoodTracker:
             return f"mood trend: \n{mood_counts.to_string()}"
         else:
             return "Invalid analysis, use summary or trend."
+class Feedback(MoodTracker):
+    def init(self):
+        super().__init__()
+    def give_feedback(self):
+        feedback = []
+        self.df = pd.read_csv('mood_data.csv')
+    
         
+        if self.df[self.df['severity']] < 3:
+            feedback.append(f"THere are {len(self.df[self.df['severity']])} entries with low severity. Consider checking in with yourself to address any persistent low moods.")
 
+        if self.df[self.df['severity'] > 8]:
+            feedback.append(f"There are {len(self.df[self.df['severity']] > 8)} entries with high severity. Make sure to take care of your well-being and reach out for support if needed!.")
 
+        sad_count = self.df[self.df['mood'] == 'sad'].shape[0]
+        
+        if sad_count >= 3:
+            feedback.append(f"You've felt 'sad' {sad_count} times recently. It might help to talk to someone or practice self-care.")
+
+        if feedback:
+            return"\n".join(feedback)
 def parse_args():
     """
     Parse command-line arguments and execute the appropriate action based on the user's input.
@@ -173,23 +191,32 @@ def parse_args():
     parser.add_argument('--view', action='store_true', help="View previous mood entries")
     parser.add_argument('--plot', action='store_true', help="Plot the last 3 mood entries")
     parser.add_argument('--analysis', type=str, help="Perform mood analysis: summary or trend")
+    parser.add_argument('--feedback', action='store_true', help="Get feedback on mood patterns (low/high severity or frequent sadness)")
 
 
     args = parser.parse_args()
 
     
     tracker = MoodTracker()
+    tracker = Feedback()
 
-    if args.add:
-        tracker.add_entry()
-    elif args.view:
-        tracker.view_entries()
-    elif args.plot:
-        tracker.plot_previous_entries()
-    elif args.analysis:
-        print(tracker(analysis=args.analysis))
+
+
+    if args.feedback:
+        tracker = Feedback()
+        print(tracker.give_feedback())
     else:
-        print("No action specified. Use add, view entries, plot, analysis.")
+        tracker = MoodTracker()
+        if args.add:
+            tracker.add_entry()
+        elif args.view:
+            tracker.view_entries()
+        elif args.plot:
+            tracker.plot_previous_entries()
+        elif args.analysis:
+            print(tracker(analysis=args.analysis))
+        else:
+            print("No action specified. Use add, view entries, plot, analysis.")
 
 if __name__ == "__main__":
     parse_args()
