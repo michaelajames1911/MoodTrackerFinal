@@ -35,4 +35,7 @@ The seaborn graph displays to show previous mood data and severity. You can inte
 # Annotated Bibliography:
 No outside sources used except INST326 course material.
 
+# Attribution Chart 
+<img width="520" alt="Screenshot 2024-12-10 at 12 42 55 PM" src="https://github.com/user-attachments/assets/fd82c14a-01ee-4a17-bc3f-cab89377f08a">
+
 
