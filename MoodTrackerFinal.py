@@ -2,6 +2,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from argparse import ArgumentParser
+from datetime import datetime
 
 
 class MoodTracker:
@@ -15,11 +16,24 @@ class MoodTracker:
     entry to the DataFrame csv file called 'mood_data.csv'.
     """
     def __init__(self):
+        """
+        Initializes the MoodTracker instance with an empty DataFrame.
+        Side Effects:
+        Creates an empty DataFrame with columns ['name', 'date', 'mood', 'context', 'severity'].
+        """
         self.df = pd.DataFrame(columns=['name', 'date', 'mood', 'context', 'severity'])
 
     def add_entry(self):
         """
         Add a new mood entry to the DataFrame.
+        add_entry adds a new mood entry to the DataFrame and allows the user to input their mood entry details, validates inputs, and adds the
+        entry to the DataFrame csv file called 'mood_data.csv'.
+        Args:None
+        Side Effects:
+        - Allows the user to input their entries through the terminal.
+        - Reads the existing 'mood_data.csv' file if their is an existing entry.
+        - Creates or updates 'mood_data.csv' with the new entry.
+        Returns: None
         """
         print("Welcome to your personal Mood Tracker!")
         name = input("Enter your name: ")
@@ -60,6 +74,60 @@ class MoodTracker:
 
         self.df.to_csv('mood_data.csv', index=False)
         print(f"Entry for {name} on {date} saved successfully!")
+    
+    def search_context_entries(self, keyword):
+        """Allows user to search for a keyword in the context.
+        Args:
+            keyword (str): word user is searchin for
+        Returns:
+            strs: entries that contain the keyword
+        Raises:
+            Exception: Any error that may happen
+        Author & Technique:
+            Lita O'Brien, json.dumps()
+        """
+        try:
+            self.df = pd.read_csv('mood_data.csv')
+            matches = self.df[self.df['context'].str.contains(keyword, case=False, na=False)]
+            
+            if matches.empty:
+                print(f"No entries match the context keyword '{keyword}'.")
+            else:
+                matches_json = json.dumps(matches.to_dict(orient="records"), indent=2)
+                print(matches_json)
+        except Exception:
+            print(f"An error occurred: {Exception}")
+     
+    def describe_severity_from_csv(self):
+            """
+            Reads mood entries from CSV and generates a description of the severity for each entry.
+            Returns:
+                str: severity in word form on certain date.
+            Raises:
+                FileNotFoundError: file doesn't exist/can't find it.
+            Author & Technique:
+                Lita O'Brien, conditional expressions
+            """
+            try:
+                self.df = pd.read_csv('mood_data.csv')
+                if self.df.empty:
+                    print("No mood entries found.")
+                    return
+                for index, row in self.df.iterrows():
+                    severity = row['severity']
+                    date = row['date']
+                    
+                    severity_word = (
+                        "marginal" if severity <= 2 else
+                        "slight" if severity <= 5 else
+                        "enhanced" if severity <= 8 else
+                        "moderate"
+                    )
+                    
+                    print(f"You had {severity_word} feelings on {date}")
+            
+            except FileNotFoundError:
+                print("File not found.")
 
     def view_entries(self):
         """
