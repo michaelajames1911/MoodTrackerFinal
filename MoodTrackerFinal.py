@@ -2,19 +2,53 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from argparse import ArgumentParser
-
+from datetime import datetime
 
 class MoodTracker:
+    """
+    A mood tracker that records mood entries in a DataFrame and saves them to a CSV file.
+
+    Attributes: pandas.DataFrame
+    A DataFrame that has columns ['name', 'date', 'mood', 'context', 'severity'] the stores mood entries.
+
+    Methods: add_entry(), 
+    Allows the user to input their mood entry details, validates inputs, and adds the
+    entry to the DataFrame csv file called 'mood_data.csv'.
+    """
     def __init__(self):
+        """
+        Initializes the MoodTracker instance with an empty DataFrame.
+
+        Side Effects:
+        Creates an empty DataFrame with columns ['name', 'date', 'mood', 'context', 'severity'].
+        """
         self.df = pd.DataFrame(columns=['name', 'date', 'mood', 'context', 'severity'])
 
     def add_entry(self):
         """
-        Add a new mood entry to the DataFrame.
+        add_entry adds a new mood entry to the DataFrame and allows the user to input their mood entry details, validates inputs, and adds the
+        entry to the DataFrame csv file called 'mood_data.csv'.
+
+        Args:None
+
+        Side Effects:
+        - Allows the user to input their entries through the terminal.
+        - Reads the existing 'mood_data.csv' file if their is an existing entry.
+        - Creates or updates 'mood_data.csv' with the new entry.
+
+        Returns: None
         """
         print("Welcome to your personal Mood Tracker!")
         name = input("Enter your name: ")
         date = input("Enter the date (YYYY-MM-DD): ")
+
+        try: 
+            datetime.strptime(date, "%Y-%m-%d")
+        
+        except ValueError:
+            print("Invalid date format. Please enter the date in YYYY-MM-DD format.")
+            return
+        
         mood = input("What mood are you feeling? (sad, happy, surprised, bad, fearful, angry, disgusted): ")
 
         valid_moods = ['sad', 'happy', 'surprised', 'bad', 'fearful', 'angry', 'disgusted']
