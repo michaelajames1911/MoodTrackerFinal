@@ -275,6 +275,9 @@ def parse_args():
             tracker.plot_previous_entries()
         elif args.analysis:
             print(tracker(analysis=args.analysis))
+        elif args.search:
+            print(f"Searching for keyword in context: {args.search}")
+            tracker.search_context_entries(args.search)
         else:
             print("No action specified. Use add, view entries, plot, analysis.")
 
