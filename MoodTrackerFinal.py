@@ -275,21 +275,21 @@ def parse_args():
     args = parser.parse_args()
 
     tracker = MoodTracker()
-        if args.add:
-            tracker.add_entry()
-        elif args.view:
-            tracker.view_entries()
-        elif args.plot:
-            tracker.plot_previous_entries()
-        elif args.analysis:
-            print(tracker(analysis=args.analysis))
-        elif args.search:
-            print(f"Searching for keyword in context: {args.search}")
-            tracker.search_context_entries(args.search)
-        elif args.describe:
-            tracker.describe_severity_from_csv()
-        else:
-            print("No action specified. Use add, view entries, plot, analysis.")
+    if args.add:
+        tracker.add_entry()
+    elif args.view:
+        tracker.view_entries()
+    elif args.plot:
+        tracker.plot_previous_entries()
+    elif args.analysis:
+        print(tracker(analysis=args.analysis))
+    elif args.search:
+        print(f"Searching for keyword in context: {args.search}")
+        tracker.search_context_entries(args.search)
+    elif args.describe:
+        tracker.describe_severity_from_csv()
+    else:
+        print("No action specified. Use add, view entries, plot, analysis.")
 
 if __name__ == "__main__":
     parse_args()
