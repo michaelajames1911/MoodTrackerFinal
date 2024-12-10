@@ -3,6 +3,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from argparse import ArgumentParser
 from datetime import datetime
+import json
 
 class MoodTracker:
     """
@@ -97,6 +98,33 @@ class MoodTracker:
         except FileNotFoundError:
             print("No past entries found. Please add an entry first.")
 
+    def search_context_entries(self, keyword):
+        """Allows user to search for a keyword in the context.
+
+        Args:
+            keyword (str): word user is searchin for
+
+        Returns:
+            strs: entries that contain the keyword
+
+        Raises:
+            Exception: Any error that may happen
+
+        Author & Technique:
+            Lita O'Brien, json.dumps()
+        """
+        try:
+            self.df = pd.read_csv('mood_data.csv')
+            matches = self.df[self.df['context'].str.contains(keyword, case=False, na=False)]
+            
+            if matches.empty:
+                print(f"No entries match the context keyword '{keyword}'.")
+            else:
+                matches_json = json.dumps(matches.to_dict(orient="records"), indent=2)
+                print(matches_json)
+        except Exception:
+            print(f"An error occurred: {Exception}")
+    
     def plot_previous_entries(self):
         """
         Create a seaborn plot displaying the mood severity distribution for the last 3 mood entries.
@@ -178,13 +206,13 @@ class MoodTracker:
             return f"mood trend: \n{mood_counts.to_string()}"
         else:
             return "Invalid analysis, use summary or trend."
+
 class Feedback(MoodTracker):
     def init(self):
         super().__init__()
     def give_feedback(self):
         feedback = []
         self.df = pd.read_csv('mood_data.csv')
-    
         
         if self.df[self.df['severity']] < 3:
             feedback.append(f"THere are {len(self.df[self.df['severity']])} entries with low severity. Consider checking in with yourself to address any persistent low moods.")
@@ -199,6 +227,7 @@ class Feedback(MoodTracker):
 
         if feedback:
             return"\n".join(feedback)
+
 def parse_args():
     """
     Parse command-line arguments and execute the appropriate action based on the user's input.
@@ -213,7 +242,7 @@ def parse_args():
           - `--view`: Displays all previous mood entries by calling the `view_entries` method of the `MoodTracker` instance.
           - `--plot`: Plots the mood severity distribution for the last 3 entries by calling the `plot_previous_entries` method of the `MoodTracker` instance.
           - `--analysis`: Performs mood analysis (either 'summary' or 'trend') by calling the `__call__` method of the `MoodTracker` instance with the specified analysis type.
-
+          - `--search`: Allows the user to search for mood entries by keyword in the context.
     Returns:
         None: The function does not return any value. It directly performs actions based on the command-line arguments.
     
@@ -226,15 +255,12 @@ def parse_args():
     parser.add_argument('--plot', action='store_true', help="Plot the last 3 mood entries")
     parser.add_argument('--analysis', type=str, help="Perform mood analysis: summary or trend")
     parser.add_argument('--feedback', action='store_true', help="Get feedback on mood patterns (low/high severity or frequent sadness)")
-
+    parser.add_argument('--search', type=str, help="Search for mood entries by context keyword")
 
     args = parser.parse_args()
 
-    
     tracker = MoodTracker()
     tracker = Feedback()
-
-
 
     if args.feedback:
         tracker = Feedback()
@@ -254,4 +280,3 @@ def parse_args():
 
 if __name__ == "__main__":
     parse_args()
-
